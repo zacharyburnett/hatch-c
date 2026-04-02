@@ -262,7 +262,7 @@ class HatchCPlatform(BaseModel):
     disable_ccache: bool = False
 
     @staticmethod
-    def default() -> HatchCPlatform:
+    def default() -> "HatchCPlatform":
         CC = environ.get("CC", PlatformDefaults[sys_platform]["CC"])
         LD = environ.get("LD", PlatformDefaults[sys_platform]["LD"])
         if "gcc" in CC:
@@ -302,7 +302,7 @@ class HatchCPlatform(BaseModel):
         return model
 
     @staticmethod
-    def platform_for_toolchain(toolchain: CompilerToolchain) -> HatchCPlatform:
+    def platform_for_toolchain(toolchain: CompilerToolchain) -> "HatchCPlatform":
         platform = HatchCPlatform.default()
         platform.toolchain = toolchain
         return platform

@@ -111,9 +111,7 @@ class HatchCBuildHook(BuildHookInterface[HatchCBuildConfig]):
             for path in Path(".").rglob("*"):
                 if path.is_dir():
                     continue
-                if str(path).startswith(str(build_plan.cmake.build)) or str(
-                    path
-                ).startswith("dist"):
+                if str(path).startswith("dist"):
                     continue
                 if path.suffix in (".pyd", ".dll", ".so", ".dylib"):
                     build_data["force_include"][str(path)] = str(path)
