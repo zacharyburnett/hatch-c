@@ -14,7 +14,6 @@ build-backend = "hatchling.build"
 name = "mypackage.mylib"
 sources = ["src/module.c"]
 include-dirs = ["src/"] # paths to add with `-I`
-include-numpy = false # add Numpy include paths with `numpy.get_include()`; numpy must be in `build-system.requires`
 library-dirs = [] # paths to add with `-L`
 libraries = [] # libraries to link with `-l` 
 extra-compile-args = []

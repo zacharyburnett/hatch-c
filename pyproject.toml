@@ -12,10 +12,10 @@ artifacts = []
 src = "src/"
 
 [tool.hatch.build.targets.sdist]
-packages = ["hatch-c"]
+packages = ["src/hatch_c"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["hatch-c"]
+packages = ["src/hatch_c"]
 
 [project]
 name = "hatch-c"
