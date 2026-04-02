@@ -1,6 +1,6 @@
 # `hatch-c`
 
-[![build](https://github.com/zacharyburnett/hatch-c/actions/workflows/build.yaml/badge.svg?branch=main&event=push)](https://github.com/zacharyburnett/hatch-c/actions/workflows/build.yaml)
+[![build](https://github.com/zacharyburnett/hatch-c/actions/workflows/build.yml/badge.svg?branch=main&event=push)](https://github.com/zacharyburnett/hatch-c/actions/workflows/build.yml)
 [![PyPI](https://img.shields.io/pypi/v/hatch-cpp.svg)](https://pypi.python.org/pypi/hatch-cpp)
 
 Very simple C build plugin for [hatch](https://hatch.pypa.io/latest/), supporting CPython only.
