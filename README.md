@@ -1,185 +1,39 @@
-# hatch-cpp
+# `hatch-c`
 
-Hatch plugin for C++ builds
-
-[![Build Status](https://github.com/python-project-templates/hatch-cpp/actions/workflows/build.yaml/badge.svg?branch=main&event=push)](https://github.com/python-project-templates/hatch-cpp/actions/workflows/build.yaml)
-[![codecov](https://codecov.io/gh/python-project-templates/hatch-cpp/branch/main/graph/badge.svg)](https://codecov.io/gh/python-project-templates/hatch-cpp)
-[![License](https://img.shields.io/github/license/python-project-templates/hatch-cpp)](https://github.com/python-project-templates/hatch-cpp)
+[![build](https://github.com/zacharyburnett/hatch-c/actions/workflows/build.yaml/badge.svg?branch=main&event=push)](https://github.com/zacharyburnett/hatch-c/actions/workflows/build.yaml)
 [![PyPI](https://img.shields.io/pypi/v/hatch-cpp.svg)](https://pypi.python.org/pypi/hatch-cpp)
 
-## Overview
-
-A simple, extensible C++ build plugin for [hatch](https://hatch.pypa.io/latest/).
+Very simple C build plugin for [hatch](https://hatch.pypa.io/latest/), supporting CPython only.
 
 ```toml
-[tool.hatch.build.hooks.hatch-cpp]
-libraries = [
-    {name = "project/extension", sources = ["cpp/project/basic.cpp"], include-dirs = ["cpp"]}
-]
+[build-system]
+requires = ["hatchling>=1.20", "hatch-c"]
+build-backend = "hatchling.build"
+
+[[tool.hatch.build.hooks.hatch-c.extension]]
+name = "mypackage.mylib"
+sources = ["src/module.c"]
+include-dirs = ["src/"] # paths to add with `-I`
+include-numpy = false # add Numpy include paths with `numpy.get_include()`; numpy must be in `build-system.requires`
+library-dirs = [] # paths to add with `-L`
+libraries = [] # libraries to link with `-l` 
+extra-compile-args = []
+extra-link-args = []
+extra-objects = []
+define-macros = [] # macros to define with `-D`
+undef-macros = [] # macros to undefine with `-U`
+py-limited-api = "cp39"  # optional limited API to use
 ```
 
-For more complete systems, see:
-
-- [scikit-build-core](https://github.com/scikit-build/scikit-build-core)
-- [setuptools](https://setuptools.pypa.io/en/latest/userguide/ext_modules.html)
-
-## Configuration
-
-Configuration is driven from the `[tool.hatch.build.hooks.hatch-cpp]` hatch hook configuration field in a `pyproject.toml`.
-It is designed to closely match existing Python/C/C++ packaging tools.
-
-```toml
-verbose = true
-libraries = { Library Args }
-cmake = { CMake Args }
-platform = { Platform, either "linux", "darwin", or "win32" }
-```
-
-See the [test cases](./hatch_cpp/tests/) for more concrete examples.
-
-`hatch-cpp` is driven by [pydantic](https://docs.pydantic.dev/latest/) models for configuration and execution of the build.
+`hatch-c` is driven by [pydantic](https://docs.pydantic.dev/latest/) models for configuration and execution of the build.
 These models can themselves be overridden by setting `build-config-class` / `build-plan-class`.
 
-### Library Arguments
+## Other Python Build Backends for C Extensions
 
-```toml
-name = "mylib"
-sources = [
-    "path/to/file.cpp",
-]
-language = "c++"
+- [`hatch-cpp`](https://github.com/python-project-templates/hatch-cpp)
+- [`scikit-build-core`](https://github.com/scikit-build/scikit-build-core)
+- [`setuptools`](https://setuptools.pypa.io/en/latest/userguide/ext_modules.html)
 
-binding = "cpython" # or "pybind11", "nanobind", "generic"
-std = "" # Passed to -std= or /std:
+## Acknowledgments 
 
-include_dirs = ["paths/to/add/to/-I"]
-library_dirs = ["paths/to/add/to/-L"]
-libraries = ["-llibraries_to_link"]
-
-extra_compile_args = ["--extra-compile-args"]
-extra_link_args = ["--extra-link-args"]
-extra_objects = ["extra_objects"]
-
-define_macros = ["-Ddefines_to_use"]
-undef_macros = ["-Uundefines_to_use"]
-
-py_limited_api = "cp39"  # limited API to use
-```
-
-### CMake Arguments
-
-`hatch-cpp` has some convenience integration with CMake.
-Though this is not designed to be as full-featured as e.g. `scikit-build`, it should be satisfactory for many small projects.
-
-```toml
-root = "path/to/cmake/root"
-build = "path/to/cmake/build/folder"
-install = "path/to/cmake/install/folder"
-
-cmake_arg_prefix = "MYPROJECT_"
-cmake_args = {}  # any other cmake args to pass
-cmake_env_args = {} # env-specific cmake args to pass
-
-include_flags = {} # include flags to pass -D
-```
-
-### CLI
-
-`hatch-cpp` is integrated with [`hatch-build`](https://github.com/python-project-templates/hatch-build) to allow easy configuration of options via command line:
-
-```bash
-hatch-build \
-    -- \
-    --verbose \
-    --platform linux \
-    --vcpkg.vcpkg a/path/to/vcpkg.json \
-    --libraries.0.binding pybind11 \
-    --libraries.0.include-dirs cpp,another-dir
-```
-
-This CLI is aware of your `pyproject.toml`-configured setup.
-To display help for this, run (note the passthrough `--`):
-
-```bash
-hatch-build -- --help
-```
-
-For example, for the `test_project_basic` in this project's `tests` folder:
-
-```raw
-hatch-build --hooks-only -- --help
-[sdist]
-
-[wheel]
-[2025-11-11T17:31:06-0500][p2a][WARNING]: Only dicts with str, int, float, bool, or enum values are supported - field `cmake_env_args` got value type typing.Dict[str, str]
-usage: hatch-build-extras-model [-h] [--verbose] [--name NAME] [--libraries.0.name LIBRARIES.0.NAME]
-                                [--libraries.0.sources.0 LIBRARIES.0.SOURCES.0] [--libraries.0.sources LIBRARIES.0.SOURCES]
-                                [--libraries.0.language LIBRARIES.0.LANGUAGE] [--libraries.0.binding LIBRARIES.0.BINDING]
-                                [--libraries.0.std LIBRARIES.0.STD] [--libraries.0.include-dirs.0 LIBRARIES.0.INCLUDE_DIRS.0]
-                                [--libraries.0.include-dirs LIBRARIES.0.INCLUDE_DIRS]
-                                [--libraries.0.library-dirs LIBRARIES.0.LIBRARY_DIRS]
-                                [--libraries.0.libraries LIBRARIES.0.LIBRARIES]
-                                [--libraries.0.extra-compile-args LIBRARIES.0.EXTRA_COMPILE_ARGS]
-                                [--libraries.0.extra-link-args LIBRARIES.0.EXTRA_LINK_ARGS]
-                                [--libraries.0.extra-objects LIBRARIES.0.EXTRA_OBJECTS]
-                                [--libraries.0.define-macros LIBRARIES.0.DEFINE_MACROS]
-                                [--libraries.0.undef-macros LIBRARIES.0.UNDEF_MACROS]
-                                [--libraries.0.export-symbols LIBRARIES.0.EXPORT_SYMBOLS]
-                                [--libraries.0.depends LIBRARIES.0.DEPENDS]
-                                [--libraries.0.py-limited-api LIBRARIES.0.PY_LIMITED_API] [--cmake.root CMAKE.ROOT]
-                                [--cmake.build CMAKE.BUILD] [--cmake.install CMAKE.INSTALL]
-                                [--cmake.cmake-arg-prefix CMAKE.CMAKE_ARG_PREFIX] [--cmake.cmake-args CMAKE.CMAKE_ARGS]
-                                [--cmake.include-flags CMAKE.INCLUDE_FLAGS] [--platform.cc PLATFORM.CC]
-                                [--platform.cxx PLATFORM.CXX] [--platform.ld PLATFORM.LD] [--platform.platform PLATFORM.PLATFORM]
-                                [--platform.toolchain PLATFORM.TOOLCHAIN] [--platform.disable-ccache] [--vcpkg.vcpkg VCPKG.VCPKG]
-                                [--vcpkg.vcpkg-root VCPKG.VCPKG_ROOT] [--vcpkg.vcpkg-repo VCPKG.VCPKG_REPO]
-                                [--vcpkg.vcpkg-triplet VCPKG.VCPKG_TRIPLET] [--build-type BUILD_TYPE] [--commands COMMANDS]
-
-options:
-  -h, --help            show this help message and exit
-  --verbose
-  --name NAME
-  --libraries.0.name LIBRARIES.0.NAME
-  --libraries.0.sources.0 LIBRARIES.0.SOURCES.0
-  --libraries.0.sources LIBRARIES.0.SOURCES
-  --libraries.0.language LIBRARIES.0.LANGUAGE
-  --libraries.0.binding LIBRARIES.0.BINDING
-  --libraries.0.std LIBRARIES.0.STD
-  --libraries.0.include-dirs.0 LIBRARIES.0.INCLUDE_DIRS.0
-  --libraries.0.include-dirs LIBRARIES.0.INCLUDE_DIRS
-  --libraries.0.library-dirs LIBRARIES.0.LIBRARY_DIRS
-  --libraries.0.libraries LIBRARIES.0.LIBRARIES
-  --libraries.0.extra-compile-args LIBRARIES.0.EXTRA_COMPILE_ARGS
-  --libraries.0.extra-link-args LIBRARIES.0.EXTRA_LINK_ARGS
-  --libraries.0.extra-objects LIBRARIES.0.EXTRA_OBJECTS
-  --libraries.0.define-macros LIBRARIES.0.DEFINE_MACROS
-  --libraries.0.undef-macros LIBRARIES.0.UNDEF_MACROS
-  --libraries.0.export-symbols LIBRARIES.0.EXPORT_SYMBOLS
-  --libraries.0.depends LIBRARIES.0.DEPENDS
-  --libraries.0.py-limited-api LIBRARIES.0.PY_LIMITED_API
-  --cmake.root CMAKE.ROOT
-  --cmake.build CMAKE.BUILD
-  --cmake.install CMAKE.INSTALL
-  --cmake.cmake-arg-prefix CMAKE.CMAKE_ARG_PREFIX
-  --cmake.cmake-args CMAKE.CMAKE_ARGS
-  --cmake.include-flags CMAKE.INCLUDE_FLAGS
-  --platform.cc PLATFORM.CC
-  --platform.cxx PLATFORM.CXX
-  --platform.ld PLATFORM.LD
-  --platform.platform PLATFORM.PLATFORM
-  --platform.toolchain PLATFORM.TOOLCHAIN
-  --platform.disable-ccache
-  --vcpkg.vcpkg VCPKG.VCPKG
-  --vcpkg.vcpkg-root VCPKG.VCPKG_ROOT
-  --vcpkg.vcpkg-repo VCPKG.VCPKG_REPO
-  --vcpkg.vcpkg-triplet VCPKG.VCPKG_TRIPLET
-  --build-type BUILD_TYPE
-  --commands COMMANDS
-```
-
-### Environment Variables
-
-`hatch-cpp` will respect standard environment variables for compiler control, e.g. `CC`, `CXX`, `LD`, `CMAKE_GENERATOR`, `OSX_DEPLOYMENT_TARGET`, etc.
-
-> [!NOTE]
-> This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).
+This project was heavily modified and stripped down from https://github.com/python-project-templates/hatch-cpp

@@ -1,114 +1,9 @@
 [build-system]
-requires = [
-    "hatchling",
-]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
-[project]
-name = "hatch-cpp"
-authors = [
-    {name = "the hatch-cpp authors", email = "t.paine154@gmail.com"},
-]
-description = "Hatch plugin for C++ builds"
-readme = "README.md"
-license = { text = "Apache-2.0" }
-version = "0.3.6"
-requires-python = ">=3.10"
-keywords = [
-    "hatch",
-    "python",
-    "build",
-    "cpp",
-    "c++",
-    "cmake",
-]
-
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-]
-
-dependencies = [
-    "hatchling",
-    "hatch-build>=0.5,<0.6",
-    "pkn",
-    "pydantic",
-]
-
-[project.optional-dependencies]
-develop = [
-    "build",
-    "bump-my-version",
-    "check-dist",
-    "codespell",
-    "hatchling",
-    "hatch-build>=0.3.2",
-    "mdformat",
-    "mdformat-tables>=1",
-    "pytest",
-    "pytest-cov",
-    "ruff",
-    "twine",
-    "ty",
-    "uv",
-    "wheel",
-    # test
-    "nanobind<2.13.0",  # https://github.com/wjakob/nanobind/commit/abd27e3b5565bc95f5091321f0f863fce8b5b95b
-    "pybind11",
-    "pytest",
-    "pytest-cov",
-    "toml",
-]
-
-[project.entry-points.hatch]
-cpp = "hatch_cpp.hooks"
-
-# [project.scripts]
-# hatch-cpp = "hatch_cpp.cli:main"
-
-[project.urls]
-Repository = "https://github.com/python-project-templates/hatch-cpp"
-Homepage = "https://github.com/python-project-templates/hatch-cpp"
-
-[tool.bumpversion]
-current_version = "0.3.6"
-commit = true
-tag = true
-commit_args = "-s"
-
-[[tool.bumpversion.files]]
-filename = "hatch_cpp/__init__.py"
-search = '__version__ = "{current_version}"'
-replace = '__version__ = "{new_version}"'
-
-[[tool.bumpversion.files]]
-filename = "pyproject.toml"
-search = 'version = "{current_version}"'
-replace = 'version = "{new_version}"'
-
-[tool.coverage.run]
-branch = false
-omit = [
-    "hatch_cpp/tests/integration/",
-]
-
-[tool.coverage.report]
-exclude_also = [
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-    "@(abc\\.)?abstractmethod",
-]
-ignore_errors = true
-fail_under = 50
+[tool.hatch.version]
+source = "vcs"
 
 [tool.hatch.build]
 artifacts = []
@@ -117,46 +12,24 @@ artifacts = []
 src = "/"
 
 [tool.hatch.build.targets.sdist]
-packages = [
-    "hatch_cpp",
-]
+packages = ["hatch_c"]
 
 [tool.hatch.build.targets.wheel]
-packages = [
-    "hatch_cpp",
-]
+packages = ["hatch_c"]
 
-[tool.pytest.ini_options]
-addopts = [
-    "-vvv",
-    "--junitxml=junit.xml",
-]
-testpaths = "hatch_cpp/tests"
+[project]
+name = "hatch-c"
+authors = [{ name = "Zach Burnett", email = "zburnett@stsci.edu" }]
+description = "Hatch plugin for C builds"
+readme = "README.md"
+license-files = ["licenses/LICENSE.txt", "licenses/hatch_cpp_LICENSE.txt"]
+requires-python = ">=3.10"
+dynamic = ["version"]
 
-[tool.ruff]
-line-length = 150
+dependencies = ["hatchling", "pydantic"]
 
-[tool.ruff.lint]
-extend-select = [
-    "I",
-]
+[project.entry-points.hatch]
+c = "hatch_c.hooks"
 
-[tool.ruff.lint.isort]
-combine-as-imports = true
-default-section = "third-party"
-known-first-party = [
-    "hatch_cpp",
-]
-section-order = [
-    "future",
-    "standard-library",
-    "third-party",
-    "first-party",
-    "local-folder",
-]
-
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = [
-    "F401",
-    "F403",
-]
+[project.urls]
+repository = "https://github.com/zacharyburnett/hatch-c"
