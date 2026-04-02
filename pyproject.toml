@@ -9,18 +9,18 @@ source = "vcs"
 artifacts = []
 
 [tool.hatch.build.sources]
-src = "/"
+src = "src/"
 
 [tool.hatch.build.targets.sdist]
-packages = ["hatch_c"]
+packages = ["hatch-c"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["hatch_c"]
+packages = ["hatch-c"]
 
 [project]
 name = "hatch-c"
 authors = [{ name = "Zach Burnett", email = "zburnett@stsci.edu" }]
-description = "Hatch plugin for C builds"
+description = "very simple C build plugin for hatch, supporting CPython only"
 readme = "README.md"
 license-files = ["licenses/LICENSE.txt", "licenses/hatch_cpp_LICENSE.txt"]
 requires-python = ">=3.10"
