@@ -23,7 +23,7 @@ authors = [{ name = "Zach Burnett", email = "zburnett@stsci.edu" }]
 description = "very simple C build plugin for hatch, supporting CPython only"
 readme = "README.md"
 license-files = ["licenses/LICENSE.txt", "licenses/hatch_cpp_LICENSE.txt"]
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 dynamic = ["version"]
 
 dependencies = ["hatchling", "pydantic"]
